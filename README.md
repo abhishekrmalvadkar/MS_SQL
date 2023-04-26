@@ -20,3 +20,10 @@ SQL_5.sql: Create two linked tables and perform all the DDL operations and creat
            the records from the created tables)
            
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+SQL_6.sql: 
+•	Inserting, updating, and deleting data using CTE
+•	Creating views for CTE
+•	Creating multiple CTE’s
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
