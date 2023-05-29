@@ -11,7 +11,6 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "output.csv",
-				"folderPath": "Output",
 				"container": "carsandplane"
 			},
 			"columnDelimiter": ",",

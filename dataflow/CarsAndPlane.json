@@ -68,7 +68,19 @@
 				"joinCarsAndPlanes sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          ID = cars@ID,",
+				"          ID = planes@ID,",
+				"          Company = cars@Company,",
+				"          Company = planes@Company,",
+				"          Model = cars@Model,",
+				"          Model = planes@Model,",
+				"          Price = cars@Price,",
+				"          Price = planes@Price,",
+				"          Color,",
+				"          ToCity",
+				"     )) ~> sink1"
 			]
 		}
 	}
