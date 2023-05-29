@@ -1,0 +1,27 @@
+{
+	"name": "EventBasedTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "eventTrigger",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"fileName": "@triggerBody().fileName"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/eventtriggerinput/blobs/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/b5dfaa3d-b10f-4efa-9126-20978eb97acc/resourceGroups/TestEnvironment/providers/Microsoft.Storage/storageAccounts/demostorageabhishek",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

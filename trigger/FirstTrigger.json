@@ -1,0 +1,25 @@
+{
+	"name": "FirstTrigger",
+	"properties": {
+		"description": "This is a scheduled trigger",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pipeline1",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 2,
+				"startTime": "2023-03-31T16:10:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}
