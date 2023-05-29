@@ -1,0 +1,75 @@
+{
+	"name": "CarsAndPlane",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "cars",
+						"type": "DatasetReference"
+					},
+					"name": "cars"
+				},
+				{
+					"dataset": {
+						"referenceName": "planes",
+						"type": "DatasetReference"
+					},
+					"name": "planes",
+					"description": "planes.csv input file"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CarsAndPlanesOutput",
+						"type": "DatasetReference"
+					},
+					"name": "sink1",
+					"rejectedDataLinkedService": {
+						"referenceName": "LinkedService_Storage",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "joinCarsAndPlanes",
+					"description": "Join cars and planes on ID column"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Company as string,",
+				"          Model as string,",
+				"          Price as integer,",
+				"          Color as string,",
+				"          ID as integer",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: true,",
+				"     ignoreNoFilesFound: false) ~> cars",
+				"source(output(",
+				"          Company as string,",
+				"          Model as string,",
+				"          Price as integer,",
+				"          ToCity as string,",
+				"          ID as integer",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: true,",
+				"     ignoreNoFilesFound: false) ~> planes",
+				"cars, planes join(cars@ID == planes@ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinCarsAndPlanes",
+				"joinCarsAndPlanes sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

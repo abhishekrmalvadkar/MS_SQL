@@ -1,0 +1,24 @@
+{
+	"name": "CarsAndPlanesOutput",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_Storage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "output.csv",
+				"folderPath": "Output",
+				"container": "carsandplane"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
