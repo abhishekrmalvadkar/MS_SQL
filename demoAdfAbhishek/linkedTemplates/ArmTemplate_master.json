@@ -129,6 +129,26 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'demoAdfAbhishek_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "demoAdfAbhishek_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"EventBasedTrigger_properties_eventTrigger_parameters_fileName": {
 						"value": "[parameters('EventBasedTrigger_properties_eventTrigger_parameters_fileName')]"
@@ -139,7 +159,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'demoAdfAbhishek_ArmTemplate_0')]"
+				"[resourceId('Microsoft.Resources/deployments', 'demoAdfAbhishek_ArmTemplate_1')]"
 			]
 		}
 	]

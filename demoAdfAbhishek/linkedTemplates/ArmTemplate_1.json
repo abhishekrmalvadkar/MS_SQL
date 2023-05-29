@@ -6,20 +6,64 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "demoAdfAbhishek"
-		},
-		"EventBasedTrigger_properties_eventTrigger_parameters_fileName": {
-			"type": "string",
-			"defaultValue": "@triggerBody().fileName"
-		},
-		"EventBasedTrigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/b5dfaa3d-b10f-4efa-9126-20978eb97acc/resourceGroups/TestEnvironment/providers/Microsoft.Storage/storageAccounts/demostorageabhishek"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/cars')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_Storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Cars.csv",
+						"container": "carsandplane"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customertype')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_Storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "customer_type.csv",
+						"container": "customertype"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/eventtriggerinput')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -222,6 +266,32 @@
 						"type": "AzureBlobStorageLocation",
 						"folderPath": "input1",
 						"container": "demo1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/planes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_Storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Planes.csv",
+						"container": "carsandplane"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -881,6 +951,99 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CarsAndPlane')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "cars",
+								"type": "DatasetReference"
+							},
+							"name": "cars"
+						},
+						{
+							"dataset": {
+								"referenceName": "planes",
+								"type": "DatasetReference"
+							},
+							"name": "planes",
+							"description": "planes.csv input file"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CarsAndPlanesOutput",
+								"type": "DatasetReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "LinkedService_Storage",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "joinCarsAndPlanes",
+							"description": "Join cars and planes on ID column"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Company as string,",
+						"          Model as string,",
+						"          Price as integer,",
+						"          Color as string,",
+						"          ID as integer",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: true,",
+						"     ignoreNoFilesFound: false) ~> cars",
+						"source(output(",
+						"          Company as string,",
+						"          Model as string,",
+						"          Price as integer,",
+						"          ToCity as string,",
+						"          ID as integer",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: true,",
+						"     ignoreNoFilesFound: false) ~> planes",
+						"cars, planes join(cars@ID == planes@ID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinCarsAndPlanes",
+						"joinCarsAndPlanes sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          ID = cars@ID,",
+						"          ID = planes@ID,",
+						"          Company = cars@Company,",
+						"          Company = planes@Company,",
+						"          Model = cars@Model,",
+						"          Model = planes@Model,",
+						"          Price = cars@Price,",
+						"          Price = planes@Price,",
+						"          Color,",
+						"          ToCity",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/cars')]",
+				"[concat(variables('factoryId'), '/datasets/planes')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/MoviesDataFlow')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -961,6 +1124,54 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Cars_And_Planes')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "cars and planes",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CarsAndPlane",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"cars": {},
+									"planes": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/CarsAndPlane')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Execute_Pipeline_Activity')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1024,13 +1235,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
+			"name": "[concat(parameters('factoryName'), '/Mapping_DataFlow')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Movies",
+						"name": "Data flow1",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1043,13 +1254,13 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "MoviesDataFlow",
+								"referenceName": "CarsAndPlane",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"MoviesInput": {},
-									"CleanMoviesOutput": {},
-									"YearWiseData": {}
+									"cars": {},
+									"planes": {},
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -1065,74 +1276,10 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"annotations": [],
-				"lastPublishTime": "2023-04-03T07:28:38Z"
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/MoviesDataFlow')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EventBasedTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "eventTrigger",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"fileName": "[parameters('EventBasedTrigger_properties_eventTrigger_parameters_fileName')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/eventtriggerinput/blobs/",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('EventBasedTrigger_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/eventTrigger')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/FirstTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "This is a scheduled trigger",
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pipeline1",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 2,
-						"startTime": "2023-03-31T16:10:00",
-						"timeZone": "India Standard Time"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pipeline1')]"
+				"[concat(variables('factoryId'), '/dataflows/CarsAndPlane')]"
 			]
 		}
 	]

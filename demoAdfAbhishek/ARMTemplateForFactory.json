@@ -273,6 +273,54 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Cars_And_Planes')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "cars and planes",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CarsAndPlane",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"cars": {},
+									"planes": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/CarsAndPlane')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CustomerType')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -591,6 +639,54 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/foreachinput')]",
 				"[concat(variables('factoryId'), '/datasets/foreachoutput')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Mapping_DataFlow')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "CarsAndPlane",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"cars": {},
+									"planes": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/CarsAndPlane')]"
 			]
 		},
 		{
@@ -933,6 +1029,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CarsAndPlanesOutput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_Storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "output.csv",
+						"container": "carsandplane"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Storage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/EmailAndPassword')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1221,6 +1345,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/cars')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_Storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Cars.csv",
+						"container": "carsandplane"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Storage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/customertype')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1473,6 +1625,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/planes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_Storage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Planes.csv",
+						"container": "carsandplane"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Storage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureDatabricks1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1663,6 +1843,101 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/pipeline1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CarsAndPlane')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "cars",
+								"type": "DatasetReference"
+							},
+							"name": "cars"
+						},
+						{
+							"dataset": {
+								"referenceName": "planes",
+								"type": "DatasetReference"
+							},
+							"name": "planes",
+							"description": "planes.csv input file"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "CarsAndPlanesOutput",
+								"type": "DatasetReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "LinkedService_Storage",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "joinCarsAndPlanes",
+							"description": "Join cars and planes on ID column"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Company as string,",
+						"          Model as string,",
+						"          Price as integer,",
+						"          Color as string,",
+						"          ID as integer",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: true,",
+						"     ignoreNoFilesFound: false) ~> cars",
+						"source(output(",
+						"          Company as string,",
+						"          Model as string,",
+						"          Price as integer,",
+						"          ToCity as string,",
+						"          ID as integer",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: true,",
+						"     ignoreNoFilesFound: false) ~> planes",
+						"cars, planes join(cars@ID == planes@ID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinCarsAndPlanes",
+						"joinCarsAndPlanes sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          ID = cars@ID,",
+						"          ID = planes@ID,",
+						"          Company = cars@Company,",
+						"          Company = planes@Company,",
+						"          Model = cars@Model,",
+						"          Model = planes@Model,",
+						"          Price = cars@Price,",
+						"          Price = planes@Price,",
+						"          Color,",
+						"          ToCity",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/cars')]",
+				"[concat(variables('factoryId'), '/datasets/planes')]",
+				"[concat(variables('factoryId'), '/datasets/CarsAndPlanesOutput')]",
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Storage')]"
 			]
 		},
 		{
