@@ -1,0 +1,54 @@
+{
+	"name": "Execute_Pipeline_Activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Wait1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ForEach",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"OutputFolders": {
+							"value": "@pipeline().parameters.Output_FolderNames",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": {
+						"value": "@pipeline().parameters.waitTimeinSeconds",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"Output_FolderNames": {
+				"type": "array"
+			},
+			"waitTimeinSeconds": {
+				"type": "int"
+			}
+		},
+		"annotations": []
+	}
+}
