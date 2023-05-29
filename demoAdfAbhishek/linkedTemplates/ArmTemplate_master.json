@@ -1,0 +1,146 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "demoAdfAbhishek"
+		},
+		"AzureDatabricks1_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
+		},
+		"Employee_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Employee'"
+		},
+		"EventbasedtriggerLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'EventbasedtriggerLS'"
+		},
+		"Input_LS_cars_planes_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Input_LS_cars_planes'"
+		},
+		"LinkedService_Storage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LinkedService_Storage'"
+		},
+		"MoviesLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'MoviesLS'"
+		},
+		"Output_LS_carsPlanes_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Output_LS_carsPlanes'"
+		},
+		"ParameterisedLinkService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ParameterisedLinkService'"
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0516-095302-pby9agow"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dummy.restapiexample.com/api/v1/employees"
+		},
+		"EventBasedTrigger_properties_eventTrigger_parameters_fileName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"EventBasedTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/b5dfaa3d-b10f-4efa-9126-20978eb97acc/resourceGroups/TestEnvironment/providers/Microsoft.Storage/storageAccounts/demostorageabhishek"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "demoAdfAbhishek_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureDatabricks1_accessToken": {
+						"value": "[parameters('AzureDatabricks1_accessToken')]"
+					},
+					"Employee_connectionString": {
+						"value": "[parameters('Employee_connectionString')]"
+					},
+					"EventbasedtriggerLS_connectionString": {
+						"value": "[parameters('EventbasedtriggerLS_connectionString')]"
+					},
+					"Input_LS_cars_planes_connectionString": {
+						"value": "[parameters('Input_LS_cars_planes_connectionString')]"
+					},
+					"LinkedService_Storage_connectionString": {
+						"value": "[parameters('LinkedService_Storage_connectionString')]"
+					},
+					"MoviesLS_connectionString": {
+						"value": "[parameters('MoviesLS_connectionString')]"
+					},
+					"Output_LS_carsPlanes_connectionString": {
+						"value": "[parameters('Output_LS_carsPlanes_connectionString')]"
+					},
+					"ParameterisedLinkService_connectionString": {
+						"value": "[parameters('ParameterisedLinkService_connectionString')]"
+					},
+					"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('AzureDatabricks1_properties_typeProperties_existingClusterId')]"
+					},
+					"RestService1_properties_typeProperties_url": {
+						"value": "[parameters('RestService1_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "demoAdfAbhishek_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"EventBasedTrigger_properties_eventTrigger_parameters_fileName": {
+						"value": "[parameters('EventBasedTrigger_properties_eventTrigger_parameters_fileName')]"
+					},
+					"EventBasedTrigger_properties_typeProperties_scope": {
+						"value": "[parameters('EventBasedTrigger_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'demoAdfAbhishek_ArmTemplate_0')]"
+			]
+		}
+	]
+}

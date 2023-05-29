@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "demoAdfAbhishek"
+		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
+		"Employee_connectionString": {
+			"value": ""
+		},
+		"EventbasedtriggerLS_connectionString": {
+			"value": ""
+		},
+		"Input_LS_cars_planes_connectionString": {
+			"value": ""
+		},
+		"LinkedService_Storage_connectionString": {
+			"value": ""
+		},
+		"MoviesLS_connectionString": {
+			"value": ""
+		},
+		"Output_LS_carsPlanes_connectionString": {
+			"value": ""
+		},
+		"ParameterisedLinkService_connectionString": {
+			"value": ""
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"value": "0516-095302-pby9agow"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://dummy.restapiexample.com/api/v1/employees"
+		},
+		"EventBasedTrigger_properties_eventTrigger_parameters_fileName": {
+			"value": "@triggerBody().fileName"
+		},
+		"EventBasedTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/b5dfaa3d-b10f-4efa-9126-20978eb97acc/resourceGroups/TestEnvironment/providers/Microsoft.Storage/storageAccounts/demostorageabhishek"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
