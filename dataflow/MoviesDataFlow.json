@@ -1,0 +1,77 @@
+{
+	"name": "MoviesDataFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "MoviesInput",
+						"type": "DatasetReference"
+					},
+					"name": "MoviesInput"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "MoviesOutput",
+						"type": "DatasetReference"
+					},
+					"name": "CleanMoviesOutput",
+					"description": "It shows the clean data wherein the movie title and year of release are in two different columns",
+					"rejectedDataLinkedService": {
+						"referenceName": "MoviesLS",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"dataset": {
+						"referenceName": "MoviesOutput",
+						"type": "DatasetReference"
+					},
+					"name": "YearWiseData"
+				}
+			],
+			"transformations": [
+				{
+					"name": "YearOfRelease",
+					"description": "It will filter the year from the title column and paste the data in a new column named YearOfRelease.\ntoInteger(trim(right(title,6),'()')): -\n1. It extracts the rightmost 6 characters from the title column.\n2. It will then remove the trailing/leading () from the extracted 6 characters.\n3. It will convert the resulting string to a integer value\n\ntoString(left(title, length(title)-6)): -\n\n1. It will first calculate the suffix by removing the last 6 characters.\n2. It will fetch the left most values.\n"
+				},
+				{
+					"name": "CountOfMovies",
+					"description": "Display the count of movies release each year"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          movieId as string,",
+				"          title as string,",
+				"          genres as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 1)) ~> MoviesInput",
+				"MoviesInput derive(YearOfRelease = toInteger(trim(right(title,6),'()')),",
+				"          title = toString(left(title, length(title)-6)),",
+				"     partitionBy('hash', 1)) ~> YearOfRelease",
+				"YearOfRelease aggregate(groupBy(YearOfRelease),",
+				"     MoviesCount = count(),",
+				"     partitionBy('hash', 1)) ~> CountOfMovies",
+				"YearOfRelease sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Movies.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> CleanMoviesOutput",
+				"CountOfMovies sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['CountOfMovies.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> YearWiseData"
+			]
+		}
+	}
+}
